@@ -27,53 +27,567 @@ API_URL = "http://127.0.0.1:8000"
 # =====================================================================
 # CUSTOM CSS
 # =====================================================================
+# =====================================================================
+# CUSTOM CSS
+# =====================================================================
 
 st.markdown(
     """
     <style>
 
-    .main-title {
-        font-size: 42px;
-        font-weight: 800;
+    /* ================================================================
+       GLOBAL
+       ================================================================ */
+
+    .stApp {
+        background:
+            radial-gradient(
+                circle at 85% 5%,
+                rgba(44, 95, 160, 0.10),
+                transparent 28%
+            ),
+            #0b0f14;
+    }
+
+    .main .block-container {
+        max-width: 1500px;
+        padding-top: 2.5rem;
+        padding-bottom: 4rem;
+    }
+
+    /* ================================================================
+       SIDEBAR
+       ================================================================ */
+
+    section[data-testid="stSidebar"] {
+        background:
+            linear-gradient(
+                180deg,
+                #111722 0%,
+                #0d121a 100%
+            );
+
+        border-right: 1px solid rgba(255,255,255,0.07);
+    }
+
+    section[data-testid="stSidebar"] > div {
+        padding-top: 1.5rem;
+    }
+
+    section[data-testid="stSidebar"] hr {
+        border-color: rgba(255,255,255,0.08);
+        margin: 1.5rem 0;
+    }
+/* Sidebar refinement */
+
+[data-testid="stSidebar"] {
+    border-right: 1px solid rgba(255,255,255,0.06);
+}
+
+[data-testid="stSidebar"] > div:first-child {
+    padding-top: 1.5rem;
+}
+    /* ================================================================
+       BRAND
+       ================================================================ */
+
+    .kavach-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
         margin-bottom: 4px;
     }
 
-    .subtitle {
-        font-size: 18px;
-        opacity: 0.70;
-        margin-bottom: 30px;
+    .kavach-shield {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background:
+            linear-gradient(
+                145deg,
+                #19314d,
+                #101b29
+            );
+
+        border: 1px solid rgba(130,190,255,0.20);
+
+        font-size: 23px;
+
+        box-shadow:
+            0 8px 25px rgba(0,0,0,0.30);
     }
+
+    .kavach-brand-name {
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+    }
+
+    .kavach-brand-subtitle {
+        font-size: 11px;
+        color: #7f8b9a;
+        margin-top: 2px;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+    }
+
+    /* ================================================================
+       MAIN HEADER
+       ================================================================ */
+
+    .kavach-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        padding: 6px 0 28px 0;
+
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+
+        margin-bottom: 28px;
+    }
+
+    .kavach-header-left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .kavach-header-icon {
+        width: 58px;
+        height: 58px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 16px;
+
+        background:
+            linear-gradient(
+                145deg,
+                #193b5d,
+                #101c2b
+            );
+
+        border: 1px solid rgba(120,190,255,0.22);
+
+        font-size: 30px;
+
+        box-shadow:
+            0 10px 30px rgba(0,0,0,0.25);
+    }
+
+    .kavach-header-title {
+        font-size: 34px;
+        font-weight: 850;
+        letter-spacing: -1.2px;
+        line-height: 1.0;
+    }
+
+    .kavach-header-description {
+        margin-top: 7px;
+        color: #8c97a6;
+        font-size: 14px;
+    }
+
+    .live-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+
+        padding: 8px 13px;
+
+        border-radius: 999px;
+
+        background: rgba(34,197,94,0.09);
+        border: 1px solid rgba(34,197,94,0.20);
+
+        color: #55d889;
+
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+
+    .live-dot {
+        width: 7px;
+        height: 7px;
+
+        border-radius: 50%;
+
+        background: #45d483;
+
+        box-shadow:
+            0 0 10px rgba(69,212,131,0.7);
+    }
+
+    /* ================================================================
+       PAGE TITLES
+       ================================================================ */
 
     .section-title {
-        font-size: 28px;
-        font-weight: 750;
-        margin-top: 20px;
-        margin-bottom: 15px;
+        font-size: 30px;
+        font-weight: 800;
+        letter-spacing: -0.7px;
+        margin-top: 8px;
+        margin-bottom: 8px;
     }
 
-    .consent-card {
-        border: 1px solid rgba(128,128,128,0.30);
-        border-radius: 10px;
-        padding: 18px;
+    .section-subtitle {
+        color: #8994a3;
+        font-size: 14px;
+        margin-bottom: 25px;
+    }
+
+    /* ================================================================
+       INFORMATION CARDS
+       ================================================================ */
+
+    .kavach-info-card {
+        background:
+            linear-gradient(
+                135deg,
+                rgba(29,56,83,0.85),
+                rgba(19,35,53,0.85)
+            );
+
+        border: 1px solid rgba(88,157,220,0.18);
+
+        border-radius: 16px;
+
+        padding: 22px 24px;
+
+        margin: 14px 0 25px 0;
+    }
+
+    .kavach-info-title {
+        font-size: 17px;
+        font-weight: 750;
+        color: #e8f3ff;
         margin-bottom: 10px;
     }
 
-    .status-card {
-        border-radius: 10px;
-        padding: 18px;
-        margin-bottom: 15px;
+    .kavach-info-text {
+        color: #a8bacd;
+        font-size: 14px;
+        line-height: 1.7;
     }
+
+    /* ================================================================
+       METRIC CARDS
+       ================================================================ */
+
+    .metric-card {
+        background:
+            linear-gradient(
+                145deg,
+                #121923,
+                #0f151d
+            );
+
+        border: 1px solid rgba(255,255,255,0.08);
+
+        border-radius: 16px;
+
+        padding: 20px;
+
+        min-height: 110px;
+
+        box-shadow:
+            0 8px 30px rgba(0,0,0,0.18);
+    }
+
+    .metric-label {
+        color: #8490a0;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+        font-weight: 700;
+    }
+
+    .metric-value {
+        margin-top: 10px;
+
+        font-size: 29px;
+        font-weight: 800;
+
+        color: #f2f6fa;
+    }
+
+    .metric-description {
+        margin-top: 5px;
+        font-size: 11px;
+        color: #697585;
+    }
+
+    /* ================================================================
+       CONSENT CARDS
+       ================================================================ */
+
+    .consent-card {
+        background:
+            linear-gradient(
+                145deg,
+                #121923,
+                #0f141c
+            );
+
+        border: 1px solid rgba(255,255,255,0.075);
+
+        border-radius: 14px;
+
+        padding: 18px 20px;
+
+        margin-bottom: 12px;
+
+        transition:
+            border-color 0.2s ease,
+            background 0.2s ease;
+    }
+
+    .consent-card:hover {
+        border-color: rgba(80,170,240,0.25);
+
+        background:
+            linear-gradient(
+                145deg,
+                #151e29,
+                #101720
+            );
+    }
+
+    /* ================================================================
+       STATUS CARDS
+       ================================================================ */
+
+    .status-card {
+        border-radius: 14px;
+        padding: 18px 20px;
+        margin-bottom: 15px;
+
+        border: 1px solid rgba(255,255,255,0.08);
+
+        background: #111720;
+    }
+
+    .status-online {
+        background: rgba(34,197,94,0.08);
+        border-color: rgba(34,197,94,0.20);
+    }
+
+    .status-offline {
+        background: rgba(239,68,68,0.08);
+        border-color: rgba(239,68,68,0.20);
+    }
+
+    /* ================================================================
+       BUTTONS
+       ================================================================ */
+
+    .stButton > button {
+        border-radius: 11px;
+
+        min-height: 46px;
+
+        font-weight: 700;
+
+        border: 1px solid rgba(255,255,255,0.10);
+
+        transition:
+            transform 0.15s ease,
+            border-color 0.15s ease;
+    }
+
+    .stButton > button:hover {
+        transform: translateY(-1px);
+
+        border-color: rgba(100,180,255,0.35);
+    }
+
+    /* ================================================================
+       TABLES
+       ================================================================ */
+
+    div[data-testid="stDataFrame"] {
+        border-radius: 12px;
+        overflow: hidden;
+
+        border: 1px solid rgba(255,255,255,0.07);
+    }
+
+    /* ================================================================
+       INPUTS
+       ================================================================ */
+
+    div[data-baseweb="select"] > div {
+        border-radius: 10px;
+    }
+
+    div[data-testid="stNumberInput"] input {
+        border-radius: 10px;
+    }
+
+    /* ================================================================
+       EXPANDERS
+       ================================================================ */
+
+    div[data-testid="stExpander"] {
+        border-radius: 12px;
+
+        border: 1px solid rgba(255,255,255,0.07);
+
+        background: rgba(17,23,32,0.65);
+    }
+
+    /* ================================================================
+       FOOTER
+       ================================================================ */
+
+    .kavach-footer {
+        margin-top: 50px;
+
+        padding-top: 20px;
+
+        border-top: 1px solid rgba(255,255,255,0.07);
+
+        color: #626d7b;
+
+        font-size: 11px;
+
+        text-align: center;
+
+        letter-spacing: 0.2px;
+    }
+
+    /* ================================================================
+       SMALL TEXT
+       ================================================================ */
 
     .small-text {
-        font-size: 13px;
-        opacity: 0.70;
+        font-size: 12px;
+        color: #7c8796;
     }
+/* ================================================================
+   KAVACH PREMIUM HEADER
+   ================================================================ */
 
+.kavach-header {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    width: 100%;
+    padding: 18px 0 24px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 30px;
+}
+
+.kavach-header-icon {
+    width: 54px;
+    height: 54px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    background: rgba(79, 195, 247, 0.10);
+    border: 1px solid rgba(79, 195, 247, 0.20);
+    font-size: 29px;
+}
+
+.kavach-header-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.kavach-header-title {
+    font-size: 32px;
+    font-weight: 850;
+    letter-spacing: 1.5px;
+    line-height: 1.1;
+}
+
+.kavach-header-description {
+    margin-top: 5px;
+    font-size: 14px;
+    color: rgba(255,255,255,0.55);
+}
+
+.live-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 13px;
+    border-radius: 20px;
+    background: rgba(34,197,94,0.08);
+    border: 1px solid rgba(34,197,94,0.20);
+    color: #55d889;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    white-space: nowrap;
+}
+
+.live-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #55d889;
+    display: inline-block;
+}
+
+
+/* ================================================================
+   STATUS CARD
+   ================================================================ */
+
+.status-card {
+    padding: 14px 16px;
+    border-radius: 12px;
+    margin: 10px 0 14px 0;
+}
+
+.status-online {
+    background: rgba(34,197,94,0.08);
+    border: 1px solid rgba(34,197,94,0.25);
+}
+
+.status-offline {
+    background: rgba(239,68,68,0.08);
+    border: 1px solid rgba(239,68,68,0.25);
+}
+
+.status-online-title {
+    display: block;
+    color: #55d889;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.7px;
+}
+
+.status-offline-title {
+    display: block;
+    color: #f87171;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.7px;
+}
+
+.status-description {
+    display: block;
+    margin-top: 6px;
+    color: rgba(255,255,255,0.55);
+    font-size: 11px;
+}
     </style>
     """,
     unsafe_allow_html=True,
 )
-
 
 # =====================================================================
 # SESSION STATE
@@ -129,20 +643,32 @@ api_online, api_data = get_api_health()
 # =====================================================================
 # SIDEBAR
 # =====================================================================
+# =====================================================================
+# SIDEBAR
+# =====================================================================
 
 with st.sidebar:
 
     st.markdown(
         """
-        # 🛡️ Kavach
-
-        ### Command Center
-        """
+        <div class="kavach-brand">
+            <div class="kavach-shield">🛡</div>
+            <div>
+                <div class="kavach-brand-name">KAVACH</div>
+                <div class="kavach-brand-subtitle">
+                    Pulse Risk Intelligence
+                </div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
 
     st.divider()
 
-    st.markdown("### Navigation")
+    st.markdown(
+        "### Command Center"
+    )
 
     page = st.radio(
         "Command Centre Navigation",
@@ -156,31 +682,75 @@ with st.sidebar:
         ],
         label_visibility="collapsed",
     )
+
     st.divider()
+
+    # ---------------------------------------------------------------
+    # SYSTEM STATUS
+    # ---------------------------------------------------------------
 
     if api_online:
 
-        st.success("● API ONLINE")
-
-        st.caption(
-            f"Engine: {api_data.get('engine_version', 'Unknown')}"
+        st.markdown(
+            """
+            <div class="status-card status-online">
+                <span class="status-online-title">● SYSTEM ONLINE</span>
+                <span class="status-description">
+                    Kavach assessment engine connected
+                </span>
+            </div>
+            """,
+            unsafe_allow_html=True,
         )
 
         st.caption(
-            f"Model: {api_data.get('model_version', 'Unknown')}"
+            f"Engine · {api_data.get('engine_version', 'Unknown')}"
         )
 
         st.caption(
-            f"Policy: {api_data.get('policy_version', 'Unknown')}"
+            f"Model · {api_data.get('model_version', 'Unknown')}"
+        )
+
+        st.caption(
+            f"Policy · {api_data.get('policy_version', 'Unknown')}"
         )
 
     else:
 
-        st.error("● API OFFLINE")
+        st.markdown(
+            """
+            <div class="status-card status-offline">
+                <span class="status-offline-title">● SYSTEM OFFLINE</span>
+                <span class="status-description">
+                    Assessment API is unavailable
+                </span>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
         st.caption(
             "Start the Kavach API on port 8000."
         )
+        
+    st.divider()
+
+    st.markdown(
+        """
+        <div class="small-text">
+            <b>KAVACH PULSE</b><br>
+            Evidence-aware alternative credit assessment
+            and policy intelligence.
+            <br><br>
+            Prototype • Live Engine
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+# =====================================================================
+# HEADER
+# =====================================================================
 
 
 # =====================================================================
@@ -188,17 +758,9 @@ with st.sidebar:
 # =====================================================================
 
 st.markdown(
-    '<div class="main-title">🛡️ KAVACH PULSE</div>',
-    unsafe_allow_html=True
+    """<div class="kavach-header"><div class="kavach-header-icon">🛡</div><div class="kavach-header-content"><div class="kavach-header-title">KAVACH PULSE</div><div class="kavach-header-description">Evidence-aware alternative credit assessment&nbsp;&nbsp;•&nbsp;&nbsp;Policy intelligence</div></div><div class="live-indicator"><span class="live-dot"></span> LIVE ENGINE</div></div>""",
+    unsafe_allow_html=True,
 )
-
-st.markdown(
-    '<div class="subtitle">'
-    'Evidence-aware alternative credit assessment and policy intelligence platform'
-    '</div>',
-    unsafe_allow_html=True
-)
-
 
 # =====================================================================
 # LIVE ASSESSMENT
