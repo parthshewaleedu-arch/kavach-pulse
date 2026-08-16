@@ -1,0 +1,99 @@
+# ============================================================
+# KAVACH PULSE
+# ============================================================
+
+# ------------------------------------------------------------
+# Python
+# ------------------------------------------------------------
+
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+kavach-env/
+venv/
+.venv/
+env/
+
+# ------------------------------------------------------------
+# Environment / secrets
+# ------------------------------------------------------------
+
+.env
+.env.*
+!.env.example
+
+*.pem
+*.key
+*.crt
+
+credentials.json
+service-account.json
+secrets.json
+token.json
+
+# ------------------------------------------------------------
+# IDE / editor
+# ------------------------------------------------------------
+
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ------------------------------------------------------------
+# OS / temporary files
+# ------------------------------------------------------------
+
+.DS_Store
+Thumbs.db
+.~lock.*
+*.tmp
+*.bak
+
+# ------------------------------------------------------------
+# RAW HOME CREDIT DATA
+# ------------------------------------------------------------
+
+application_train.csv
+application_test.csv
+bureau.csv
+bureau_balance.csv
+credit_card_balance.csv
+installments_payments.csv
+POS_CASH_balance.csv
+previous_application.csv
+sample_submission.csv
+HomeCredit_columns_description.csv
+
+# ------------------------------------------------------------
+# DERIVED DATASETS
+# ------------------------------------------------------------
+
+home_credit_low_cardinality.csv
+home_credit_missing_values.csv
+
+# ------------------------------------------------------------
+# GENERATED KAVACH DATA / EXPERIMENT OUTPUTS
+# ------------------------------------------------------------
+
+kavach_*.csv
+kavach_*.json
+kavach_*.png
+kavach_*.joblib
+
+# Logs
+kavach_*.log
+
+# Timestamped validation/demo outputs
+*_202*.csv
+*_202*.json
+
+# ------------------------------------------------------------
+# Streamlit secrets
+# ------------------------------------------------------------
+
+.streamlit/secrets.toml
+
