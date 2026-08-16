@@ -145,9 +145,10 @@ with st.sidebar:
     st.markdown("### Navigation")
 
     page = st.radio(
-        "Navigation",
+        "Command Centre Navigation",
         [
             "Live Assessment",
+            "Applicant Comparison",
             "Risk & Confidence",
             "Validation",
             "Governance",
@@ -974,6 +975,978 @@ if page == "Live Assessment":
 # =====================================================================
 # RISK & CONFIDENCE
 # =====================================================================
+elif page == "Applicant Comparison":
+
+    # ===============================================================
+    # APPLICANT COMPARISON
+    # ===============================================================
+
+    st.markdown(
+        '<div class="section-title">Applicant Comparison</div>',
+        unsafe_allow_html=True
+    )
+
+    st.caption(
+        "Compare two applicant profiles using the live Kavach "
+        "assessment engine."
+    )
+
+    # ---------------------------------------------------------------
+    # DEMO SCENARIOS
+    # ---------------------------------------------------------------
+
+    comparison_scenarios = {
+
+        "Strong Established": {
+            "applicant_id": 201,
+            "description":
+                "Complete history with strong and stable behaviour.",
+
+            "payload": {
+                "applicant_id": 201,
+                "history_months": 12,
+                "available_months": 12,
+                "source_count": 3,
+                "payment_success_rate": 0.98,
+                "income_cv": 0.12,
+                "cashflow_cv": 0.20,
+                "balance_min": 40000,
+                "inflow_to_outflow_ratio": 1.55,
+                "income_trend": 0.04,
+                "consent_granted": True,
+            },
+        },
+
+        "Strong Behaviour / Thin File": {
+            "applicant_id": 202,
+            "description":
+                "Excellent behaviour, but insufficient historical depth.",
+
+            "payload": {
+                "applicant_id": 202,
+                "history_months": 2,
+                "available_months": 2,
+                "source_count": 3,
+                "payment_success_rate": 0.98,
+                "income_cv": 0.12,
+                "cashflow_cv": 0.20,
+                "balance_min": 40000,
+                "inflow_to_outflow_ratio": 1.55,
+                "income_trend": 0.04,
+                "consent_granted": True,
+            },
+        },
+
+        "Incomplete Evidence": {
+            "applicant_id": 203,
+            "description":
+                "Long requested history, but substantial evidence is missing.",
+
+            "payload": {
+                "applicant_id": 203,
+                "history_months": 12,
+                "available_months": 7,
+                "source_count": 2,
+                "payment_success_rate": 0.96,
+                "income_cv": 0.18,
+                "cashflow_cv": 0.30,
+                "balance_min": 25000,
+                "inflow_to_outflow_ratio": 1.30,
+                "income_trend": 0.01,
+                "consent_granted": True,
+            },
+        },
+
+        "Behavioural Deterioration": {
+            "applicant_id": 204,
+            "description":
+                "Strong history, but poor and deteriorating behaviour.",
+
+            "payload": {
+                "applicant_id": 204,
+                "history_months": 12,
+                "available_months": 12,
+                "source_count": 3,
+                "payment_success_rate": 0.60,
+                "income_cv": 0.50,
+                "cashflow_cv": 0.80,
+                "balance_min": 1000,
+                "inflow_to_outflow_ratio": 0.70,
+                "income_trend": -0.15,
+                "consent_granted": True,
+            },
+        },
+    }
+
+    scenario_names = list(comparison_scenarios.keys())
+
+    # ---------------------------------------------------------------
+    # API STATUS
+    # ---------------------------------------------------------------
+
+    try:
+
+        health_response = requests.get(
+            f"{API_URL}/health",
+            timeout=3
+        )
+
+        api_online = health_response.status_code == 200
+
+    except requests.RequestException:
+
+        api_online = False
+
+
+    if not api_online:
+
+        st.error(
+            "Kavach API is offline. Start the live assessment API "
+            "before running a comparison."
+        )
+
+        st.code(
+            "python3 29_kavach_live_assessment_api.py",
+            language="bash"
+        )
+
+        st.stop()
+
+
+    st.success(
+        "LIVE ENGINE CONNECTED • Comparison uses the Kavach API"
+    )
+
+    # ---------------------------------------------------------------
+    # CORE PRINCIPLE
+    # ---------------------------------------------------------------
+
+    st.info(
+        """
+        **Kavach compares two independent dimensions:**
+
+        **RISK** — What does the available behavioural evidence suggest?
+
+        **CONFIDENCE** — How sufficient and reliable is that evidence?
+
+        A low-risk estimate with weak evidence is not treated as
+        equivalent to the same risk estimate supported by strong evidence.
+
+        **RISK ≠ CONFIDENCE**
+        """
+    )
+
+    # ---------------------------------------------------------------
+    # PROFILE SELECTION
+    # ---------------------------------------------------------------
+
+    st.markdown("## 1. Select Two Profiles")
+
+    col_a, col_b = st.columns(2)
+
+    with col_a:
+
+        st.markdown("### Applicant A")
+
+        applicant_a = st.selectbox(
+            "Choose Applicant A",
+            scenario_names,
+            index=0,
+            key="comparison_applicant_a",
+        )
+
+        scenario_a = comparison_scenarios[applicant_a]
+
+        st.caption(
+            scenario_a["description"]
+        )
+
+
+    with col_b:
+
+        st.markdown("### Applicant B")
+
+        applicant_b = st.selectbox(
+            "Choose Applicant B",
+            scenario_names,
+            index=1,
+            key="comparison_applicant_b",
+        )
+
+        scenario_b = comparison_scenarios[applicant_b]
+
+        st.caption(
+            scenario_b["description"]
+        )
+
+
+    # ---------------------------------------------------------------
+    # PROFILE INPUT PREVIEW
+    # ---------------------------------------------------------------
+
+    with st.expander(
+        "View selected profile inputs",
+        expanded=False
+    ):
+
+        input_col_a, input_col_b = st.columns(2)
+
+        with input_col_a:
+
+            st.markdown(
+                f"**Applicant A — {applicant_a}**"
+            )
+
+            payload_a = scenario_a["payload"]
+
+            st.write(
+                f"History: {payload_a['history_months']} months"
+            )
+
+            st.write(
+                f"Available: {payload_a['available_months']} months"
+            )
+
+            st.write(
+                f"Payment success: "
+                f"{payload_a['payment_success_rate']:.2f}"
+            )
+
+            st.write(
+                f"Income volatility: "
+                f"{payload_a['income_cv']:.2f}"
+            )
+
+            st.write(
+                f"Cash-flow volatility: "
+                f"{payload_a['cashflow_cv']:.2f}"
+            )
+
+            st.write(
+                f"Minimum balance: "
+                f"₹{payload_a['balance_min']:,.0f}"
+            )
+
+            st.write(
+                f"Inflow/outflow: "
+                f"{payload_a['inflow_to_outflow_ratio']:.2f}"
+            )
+
+            st.write(
+                f"Income trend: "
+                f"{payload_a['income_trend']:+.2f}"
+            )
+
+
+        with input_col_b:
+
+            st.markdown(
+                f"**Applicant B — {applicant_b}**"
+            )
+
+            payload_b = scenario_b["payload"]
+
+            st.write(
+                f"History: {payload_b['history_months']} months"
+            )
+
+            st.write(
+                f"Available: {payload_b['available_months']} months"
+            )
+
+            st.write(
+                f"Payment success: "
+                f"{payload_b['payment_success_rate']:.2f}"
+            )
+
+            st.write(
+                f"Income volatility: "
+                f"{payload_b['income_cv']:.2f}"
+            )
+
+            st.write(
+                f"Cash-flow volatility: "
+                f"{payload_b['cashflow_cv']:.2f}"
+            )
+
+            st.write(
+                f"Minimum balance: "
+                f"₹{payload_b['balance_min']:,.0f}"
+            )
+
+            st.write(
+                f"Inflow/outflow: "
+                f"{payload_b['inflow_to_outflow_ratio']:.2f}"
+            )
+
+            st.write(
+                f"Income trend: "
+                f"{payload_b['income_trend']:+.2f}"
+            )
+
+
+    # ---------------------------------------------------------------
+    # RUN COMPARISON
+    # ---------------------------------------------------------------
+
+    st.markdown("## 2. Live Comparison")
+
+    if st.button(
+        "⚡ Run Live Comparison",
+        type="primary",
+        width="stretch",
+        key="run_applicant_comparison",
+    ):
+
+        with st.spinner(
+            "Running both applicants through the live Kavach engine..."
+        ):
+
+            try:
+
+                response_a = requests.post(
+                    f"{API_URL}/assess",
+                    json=scenario_a["payload"],
+                    timeout=10,
+                )
+
+                response_b = requests.post(
+                    f"{API_URL}/assess",
+                    json=scenario_b["payload"],
+                    timeout=10,
+                )
+
+            except requests.RequestException as exc:
+
+                st.error(
+                    f"Unable to connect to Kavach API: {exc}"
+                )
+
+                st.stop()
+
+
+        if (
+            response_a.status_code != 200
+            or response_b.status_code != 200
+        ):
+
+            st.error(
+                "One or both assessments were rejected by the Kavach API."
+            )
+
+            if response_a.status_code != 200:
+
+                st.code(
+                    response_a.text,
+                    language="json"
+                )
+
+            if response_b.status_code != 200:
+
+                st.code(
+                    response_b.text,
+                    language="json"
+                )
+
+            st.stop()
+
+
+        result_a = response_a.json()
+        result_b = response_b.json()
+
+        st.session_state.comparison_result_a = result_a
+        st.session_state.comparison_result_b = result_b
+        st.session_state.comparison_name_a = applicant_a
+        st.session_state.comparison_name_b = applicant_b
+
+
+    # ---------------------------------------------------------------
+    # DISPLAY SAVED COMPARISON
+    # ---------------------------------------------------------------
+
+    if (
+        "comparison_result_a" not in st.session_state
+        or "comparison_result_b" not in st.session_state
+    ):
+
+        st.info(
+            "Select two profiles and click **Run Live Comparison** "
+            "to generate the side-by-side assessment."
+        )
+
+    else:
+
+        result_a = st.session_state.comparison_result_a
+        result_b = st.session_state.comparison_result_b
+
+        name_a = st.session_state.comparison_name_a
+        name_b = st.session_state.comparison_name_b
+
+        # -----------------------------------------------------------
+        # HELPER
+        # -----------------------------------------------------------
+
+        def comparison_value(result, *keys, default="N/A"):
+
+            for key in keys:
+
+                value = result.get(key)
+
+                if value is not None:
+                    return value
+
+            return default
+
+
+        risk_a = comparison_value(
+            result_a,
+            "risk_proxy",
+            "risk",
+            "risk_score",
+            default=0,
+        )
+
+        risk_b = comparison_value(
+            result_b,
+            "risk_proxy",
+            "risk",
+            "risk_score",
+            default=0,
+        )
+
+        evidence_a = comparison_value(
+            result_a,
+            "evidence_quality",
+            "evidence_score",
+            default=0,
+        )
+
+        evidence_b = comparison_value(
+            result_b,
+            "evidence_quality",
+            "evidence_score",
+            default=0,
+        )
+
+        confidence_a = comparison_value(
+            result_a,
+            "confidence",
+            default="N/A",
+        )
+
+        confidence_b = comparison_value(
+            result_b,
+            "confidence",
+            default="N/A",
+        )
+
+        risk_band_a = comparison_value(
+            result_a,
+            "risk_band",
+            default="N/A",
+        )
+
+        risk_band_b = comparison_value(
+            result_b,
+            "risk_band",
+            default="N/A",
+        )
+
+        policy_a = comparison_value(
+            result_a,
+            "policy_decision",
+            "policy",
+            "policy_routing",
+            default="N/A",
+        )
+
+        policy_b = comparison_value(
+            result_b,
+            "policy_decision",
+            "policy",
+            "policy_routing",
+            default="N/A",
+        )
+
+        history_a = comparison_value(
+            result_a,
+            "history_depth",
+            "history",
+            default="N/A",
+        )
+
+        history_b = comparison_value(
+            result_b,
+            "history_depth",
+            "history",
+            default="N/A",
+        )
+
+        # -----------------------------------------------------------
+        # RESULTS HEADER
+        # -----------------------------------------------------------
+
+        st.markdown("## 3. Assessment Comparison")
+
+        result_col_a, vs_col, result_col_b = st.columns(
+            [5, 1, 5]
+        )
+
+        with result_col_a:
+
+            st.markdown(
+                f"### 🛡️ Applicant A"
+            )
+
+            st.caption(name_a)
+
+        with vs_col:
+
+            st.markdown(
+                "<h2 style='text-align:center;'>VS</h2>",
+                unsafe_allow_html=True
+            )
+
+        with result_col_b:
+
+            st.markdown(
+                f"### 🛡️ Applicant B"
+            )
+
+            st.caption(name_b)
+
+
+        # -----------------------------------------------------------
+        # TOP METRICS
+        # -----------------------------------------------------------
+
+        metric_a, metric_b = st.columns(2)
+
+        with metric_a:
+
+            st.metric(
+                "Risk",
+                (
+                    f"{float(risk_a):.2f}%"
+                    if isinstance(
+                        risk_a,
+                        (int, float)
+                    )
+                    else str(risk_a)
+                )
+            )
+
+            st.metric(
+                "Evidence Quality",
+                (
+                    f"{float(evidence_a):.1f}/100"
+                    if isinstance(
+                        evidence_a,
+                        (int, float)
+                    )
+                    else str(evidence_a)
+                )
+            )
+
+            st.metric(
+                "Confidence",
+                str(confidence_a)
+            )
+
+
+        with metric_b:
+
+            st.metric(
+                "Risk",
+                (
+                    f"{float(risk_b):.2f}%"
+                    if isinstance(
+                        risk_b,
+                        (int, float)
+                    )
+                    else str(risk_b)
+                )
+            )
+
+            st.metric(
+                "Evidence Quality",
+                (
+                    f"{float(evidence_b):.1f}/100"
+                    if isinstance(
+                        evidence_b,
+                        (int, float)
+                    )
+                    else str(evidence_b)
+                )
+            )
+
+            st.metric(
+                "Confidence",
+                str(confidence_b)
+            )
+
+
+        # -----------------------------------------------------------
+        # SIDE-BY-SIDE TABLE
+        # -----------------------------------------------------------
+
+        st.markdown("### Decision Matrix")
+
+        comparison_table = {
+            "Dimension": [
+                "Risk",
+                "Risk Band",
+                "Evidence Quality",
+                "Confidence",
+                "History",
+                "Policy Decision",
+            ],
+
+            "Applicant A": [
+                (
+                    f"{float(risk_a):.2f}%"
+                    if isinstance(risk_a, (int, float))
+                    else str(risk_a)
+                ),
+                str(risk_band_a),
+                (
+                    f"{float(evidence_a):.1f}/100"
+                    if isinstance(evidence_a, (int, float))
+                    else str(evidence_a)
+                ),
+                str(confidence_a),
+                str(history_a),
+                str(policy_a),
+            ],
+
+            "Applicant B": [
+                (
+                    f"{float(risk_b):.2f}%"
+                    if isinstance(risk_b, (int, float))
+                    else str(risk_b)
+                ),
+                str(risk_band_b),
+                (
+                    f"{float(evidence_b):.1f}/100"
+                    if isinstance(evidence_b, (int, float))
+                    else str(evidence_b)
+                ),
+                str(confidence_b),
+                str(history_b),
+                str(policy_b),
+            ],
+        }
+
+        st.table(comparison_table)
+
+
+        # -----------------------------------------------------------
+        # DIFFERENCE ANALYSIS
+        # -----------------------------------------------------------
+
+        st.markdown("### Comparison Signals")
+
+        difference_col_1, difference_col_2 = st.columns(2)
+
+        if (
+            isinstance(risk_a, (int, float))
+            and isinstance(risk_b, (int, float))
+        ):
+
+            risk_difference = abs(
+                float(risk_a) - float(risk_b)
+            )
+
+            if risk_a < risk_b:
+
+                lower_risk = "Applicant A"
+
+            elif risk_b < risk_a:
+
+                lower_risk = "Applicant B"
+
+            else:
+
+                lower_risk = "Neither — equal risk estimate"
+
+
+        else:
+
+            risk_difference = None
+            lower_risk = "Unable to determine"
+
+
+        if (
+            isinstance(evidence_a, (int, float))
+            and isinstance(evidence_b, (int, float))
+        ):
+
+            evidence_difference = abs(
+                float(evidence_a) - float(evidence_b)
+            )
+
+            if evidence_a > evidence_b:
+
+                stronger_evidence = "Applicant A"
+
+            elif evidence_b > evidence_a:
+
+                stronger_evidence = "Applicant B"
+
+            else:
+
+                stronger_evidence = "Neither — equal evidence"
+
+        else:
+
+            evidence_difference = None
+            stronger_evidence = "Unable to determine"
+
+
+        with difference_col_1:
+
+            if risk_difference is not None:
+
+                st.metric(
+                    "Risk Difference",
+                    f"{risk_difference:.2f} percentage points"
+                )
+
+            st.info(
+                f"**Lower estimated risk:** {lower_risk}"
+            )
+
+
+        with difference_col_2:
+
+            if evidence_difference is not None:
+
+                st.metric(
+                    "Evidence Difference",
+                    f"{evidence_difference:.1f} points"
+                )
+
+            st.info(
+                f"**Stronger evidence:** {stronger_evidence}"
+            )
+
+
+        # -----------------------------------------------------------
+        # RISK ≠ CONFIDENCE EXPLANATION
+        # -----------------------------------------------------------
+
+        st.markdown("### Why the Results Differ")
+
+        explanation_col_a, explanation_col_b = st.columns(2)
+
+        supporting_a = comparison_value(
+            result_a,
+            "factors_supporting_lower_risk",
+            "supporting_factors",
+            default=[],
+        )
+
+        supporting_b = comparison_value(
+            result_b,
+            "factors_supporting_lower_risk",
+            "supporting_factors",
+            default=[],
+        )
+
+        concern_a = comparison_value(
+            result_a,
+            "factors_increasing_concern",
+            "concern_factors",
+            default=[],
+        )
+
+        concern_b = comparison_value(
+            result_b,
+            "factors_increasing_concern",
+            "concern_factors",
+            default=[],
+        )
+
+
+        with explanation_col_a:
+
+            st.markdown(
+                f"#### {name_a}"
+            )
+
+            st.markdown("**Factors supporting lower risk**")
+
+            if isinstance(supporting_a, list) and supporting_a:
+
+                for factor in supporting_a:
+
+                    st.write(
+                        f"✓ {factor}"
+                    )
+
+            else:
+
+                st.write(
+                    "No supporting factors returned."
+                )
+
+            st.markdown("**Factors increasing concern**")
+
+            if isinstance(concern_a, list) and concern_a:
+
+                for factor in concern_a:
+
+                    st.write(
+                        f"⚠ {factor}"
+                    )
+
+            else:
+
+                st.write(
+                    "No major concern identified."
+                )
+
+
+        with explanation_col_b:
+
+            st.markdown(
+                f"#### {name_b}"
+            )
+
+            st.markdown("**Factors supporting lower risk**")
+
+            if isinstance(supporting_b, list) and supporting_b:
+
+                for factor in supporting_b:
+
+                    st.write(
+                        f"✓ {factor}"
+                    )
+
+            else:
+
+                st.write(
+                    "No supporting factors returned."
+                )
+
+            st.markdown("**Factors increasing concern**")
+
+            if isinstance(concern_b, list) and concern_b:
+
+                for factor in concern_b:
+
+                    st.write(
+                        f"⚠ {factor}"
+                    )
+
+            else:
+
+                st.write(
+                    "No major concern identified."
+                )
+
+
+        # -----------------------------------------------------------
+        # EVIDENCE LIMITATIONS
+        # -----------------------------------------------------------
+
+        limitations_a = comparison_value(
+            result_a,
+            "evidence_limitations",
+            "limitations",
+            default=[],
+        )
+
+        limitations_b = comparison_value(
+            result_b,
+            "evidence_limitations",
+            "limitations",
+            default=[],
+        )
+
+        st.markdown("### Evidence Limitations")
+
+        limitation_col_a, limitation_col_b = st.columns(2)
+
+        with limitation_col_a:
+
+            st.markdown(
+                f"**{name_a}**"
+            )
+
+            if isinstance(limitations_a, list) and limitations_a:
+
+                for item in limitations_a:
+
+                    st.warning(
+                        str(item)
+                    )
+
+            else:
+
+                st.success(
+                    "No major evidence limitation identified."
+                )
+
+
+        with limitation_col_b:
+
+            st.markdown(
+                f"**{name_b}**"
+            )
+
+            if isinstance(limitations_b, list) and limitations_b:
+
+                for item in limitations_b:
+
+                    st.warning(
+                        str(item)
+                    )
+
+            else:
+
+                st.success(
+                    "No major evidence limitation identified."
+                )
+
+
+        # -----------------------------------------------------------
+        # FINAL INTERPRETATION
+        # -----------------------------------------------------------
+
+        st.markdown("### Kavach Interpretation")
+
+        if lower_risk == stronger_evidence:
+
+            st.success(
+                f"**{lower_risk}** has both the lower estimated risk "
+                f"and stronger evidence in this comparison."
+            )
+
+        else:
+
+            st.info(
+                f"""
+                **Risk and evidence are telling different stories.**
+
+                Lower estimated risk: **{lower_risk}**
+
+                Stronger evidence: **{stronger_evidence}**
+
+                This is exactly why Kavach does not treat risk as
+                equivalent to confidence. A numerical risk estimate
+                must be interpreted together with the quality and
+                depth of the evidence supporting it.
+                """
+            )
+
+
+        st.divider()
+
+        st.caption(
+            "Comparison results are generated from the live Kavach "
+            "assessment API using prototype demonstration profiles."
+        )
 
 elif page == "Risk & Confidence":
 
