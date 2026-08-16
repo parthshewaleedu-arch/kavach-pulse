@@ -44,7 +44,7 @@ from typing import List
 from datetime import datetime, timezone
 import math
 import uuid
-
+import os
 
 # =====================================================================
 # APP
@@ -977,7 +977,7 @@ if __name__ == "__main__":
 
     uvicorn.run(
         app,
-        host="127.0.0.1",
-        port=8000,
+        host="0.0.0.0",
+        port=int(os.getenv("PORT", "8000")),
         reload=False
     )
